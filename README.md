@@ -106,19 +106,13 @@ lib/
 
 ---
 
-## 📸 Screens
+<h2>📸 Screens</h2>
 
-### Home Screen
-
-![Home](assets/screenshots/screenshot_1.png)
-
-### Login Screen
-
-![Login](assets/screenshots/screenshot_2.png)
-
-### Sign up Screen
-
-![Sign up](assets/screenshots/screenshot_3.png)
+<p align="center">
+  <img src="assets/screenshots/screenshot_1.png" width="220"/>
+  <img src="assets/screenshots/screenshot_2.png" width="220"/>
+  <img src="assets/screenshots/screenshot_3.png" width="220"/>
+</p>
 
 
 ---
