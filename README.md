@@ -1,48 +1,84 @@
 # 🎬 Movie Recommendation App
 
-A modern Movie Recommendation application built with **Flutter**, featuring a clean and responsive user interface, **Firebase Authentication**, and **Provider** for state management. The project is designed with scalability in mind and will integrate the **TMDB API** to display real-time movie information.
+A modern **Movie Recommendation Application** built with **Flutter**, featuring **Firebase Authentication**, **TMDB API Integration**, **Provider State Management**, and a clean, responsive UI. The app allows users to browse popular movies, search for movies, view detailed information, manage favorites, and maintain their profile.
 
 ---
 
 ## ✨ Features
 
-* User Registration
-* User Login
-* Secure Logout
-* Firebase Authentication
-* Clean and Modern UI
-* Bottom Navigation
-* Home Screen
-* Search Screen
-* Favorites Screen
-* Profile Screen
-* Provider State Management
-* Responsive Layout
+### 🔐 Authentication
+- User Registration
+- User Login
+- Secure Logout
+- Firebase Authentication
+
+### 🎥 Movies
+- Browse Popular Movies
+- View Movie Details
+- Movie Poster & Backdrop
+- Movie Overview
+- Release Date
+- Ratings
+- Runtime
+- Genres
+- Cast Information
+
+### 🔍 Search
+- Search Movies by Name
+- Dynamic Search Results
+
+### ❤️ Favorites
+- Add Movies to Favorites
+- Remove Movies from Favorites
+- Persistent Favorites using Provider
+
+### 👤 Profile
+- Display User Information
+- Profile Picture Support
+- Logout
+
+### 🎨 UI
+- Modern & Responsive Design
+- Bottom Navigation
+- Custom Widgets
+- Loading Indicators
+- Error Handling
+
+### ⚙️ State Management
+- Provider Architecture
+- Clean Code Structure
+- Reusable Components
 
 ---
 
 ## 🛠️ Tech Stack
 
-* Flutter
-* Dart
-* Firebase Authentication
-* Provider
-* Material Design
+- Flutter
+- Dart
+- Firebase Authentication
+- TMDB REST API
+- Dio
+- Provider
+- Material Design
 
 ---
 
 ## 📂 Project Structure
 
-```
+```text
 lib/
 │
-├── authentication/
+├── authorization/
+├── constants/
 ├── home/
-├── providers/
-├── services/
 ├── models/
-├── widgets/
+├── movie_details_screen/
+├── provider/
+├── services/
+├── splash/
 ├── utils/
+├── welcome/
+├── widgets/
 └── main.dart
 ```
 
@@ -50,45 +86,94 @@ lib/
 
 ## 🚀 Current Progress
 
-* ✅ UI Design Completed
-* ✅ Firebase Authentication Completed
-* ✅ Navigation Completed
-* ✅ Provider Integration Completed
-* 🔄 TMDB API Integration (In Progress)
-* 🔄 Real Movie Data
-* 🔄 Favorites Synchronization
+- ✅ Firebase Authentication
+- ✅ Splash Screen
+- ✅ Login & Sign Up
+- ✅ Bottom Navigation
+- ✅ Home Screen
+- ✅ Movie API Integration
+- ✅ Popular Movies
+- ✅ Movie Details Screen
+- ✅ Cast Information
+- ✅ Search Functionality
+- ✅ Favorites
+- ✅ Profile Screen
+- ✅ Provider State Management
+- ✅ Responsive UI
+- 🔄 Watchlist
+- 🔄 Firestore Integration
+- 🔄 Offline Caching
 
 ---
 
 ## 📸 Screens
 
-* Login
-* Sign Up
-* Home
-* Search
-* Favorites
-* Profile
+### Home Screen
+
+![Home](assets/screenshots/screenshot_1.png)
+
+### Login Screen
+
+![Login](assets/screenshots/screenshot_2.png)
+
+### Sign up Screen
+
+![Sign up](assets/screenshots/screenshot_3.png)
+
+
+---
+
+## 🔑 API Configuration
+
+This project uses the **TMDB API**.
+
+For security reasons, the actual API key is **not included** in this repository.
+
+Create the following file:
+
+```text
+lib/constants/api_constants.dart
+```
+
+using:
+
+```text
+lib/constants/api_constants.example.dart
+```
+
+Then replace:
+
+```dart
+YOUR_API_KEY_HERE
+```
+
+with your own TMDB API key.
 
 ---
 
 ## 📌 Future Improvements
 
-* TMDB API Integration
-* Movie Details Screen
-* Watchlist
-* Ratings and Reviews
-* Dark/Light Theme
-* Firebase Firestore
-* Offline Caching
+- Watchlist
+- Movie Recommendations
+- Similar Movies
+- Trailer Support
+- Ratings & Reviews
+- Dark / Light Theme
+- Firebase Firestore Sync
+- Offline Storage
+- Pagination
+- Infinite Scrolling
 
 ---
 
 ## 👨‍💻 Author
 
-Developed by **Najam Us Saqib**
+**Saqib**
+
+Flutter Developer
 
 ---
 
 ## 📄 License
 
-This project is created for learning and educational purposes.
+This project is developed for learning and educational purposes.

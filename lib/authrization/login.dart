@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movie_recommendation_app/app_colors.dart';
+import 'package:movie_recommendation_app/utils/app_colors.dart';
 import 'package:movie_recommendation_app/authrization/forgot_password.dart';
 import 'package:movie_recommendation_app/authrization/sign_up.dart';
 import 'package:movie_recommendation_app/home/home.dart';
@@ -32,7 +32,6 @@ class _LoginState extends State<Login> {
               "assets/images/The Odyssey.jpg",
               fit: BoxFit.cover,
               width: double.infinity,
-              // height: 700,
             )
           ),
 
@@ -208,7 +207,6 @@ class _LoginState extends State<Login> {
                             ElevatedButton(
                               onPressed: () async {
                                 if (formkey.currentState!.validate()) {
-                                  // await use karna ka purpose ye ke login hona tak wait karo.
                                   bool sucess = await provider.login(email.text, password.text); 
                                   if (sucess) {
                                     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(

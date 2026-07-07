@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:movie_recommendation_app/app_colors.dart';
+import 'package:movie_recommendation_app/movie_details_screen/movie_detail_screen.dart';
+import 'package:movie_recommendation_app/provider/authrization_provider.dart';
+import 'package:movie_recommendation_app/provider/movie_provider.dart';
+import 'package:movie_recommendation_app/provider/navigation_provider.dart';
+import 'package:movie_recommendation_app/utils/app_colors.dart';
+import 'package:movie_recommendation_app/widgets/movie_horizontal_list.dart';
+import 'package:provider/provider.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -9,31 +15,17 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State <HomeTab> {
-  List <Map<String, dynamic>> movies = [
-    {
-      "title" : "The Northman",
-      "rating" : "8.5",
-      "image" : "assets/images/The Northman.jpg" 
-    },
-
-    {
-      "title" : "The Northman 2",
-      "rating" : "6.5",
-      "image" : "assets/images/The Northman 2.jpg"
-    },
-
-    {
-      "title" : "The Odyssey",
-      "rating" : "9.5",
-      "image" : "assets/images/The Odyssey.jpg"
-    },
-
-    {
-      "title" : "The Odyssey 2",
-      "rating" : "8.2",
-      "image" : "assets/images/The Odyssey 2.jpg"
-    },
-  ];
+  
+  @override
+  void initState () {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MovieProvider>().getPopularMovies();  
+      context.read<MovieProvider>().getTrendingMovies();
+      context.read<MovieProvider>().getTopRatedMovies();
+      context.read<MovieProvider>().getUpComingMovies();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +37,17 @@ class _HomeTabState extends State <HomeTab> {
           children: [
             Row(
               children: [
-                Text(
-                  "Hello, Saqi",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
+                Consumer<AuthrizationProvider>(
+                  builder: (context, provider, child) {
+                    return Text(
+                      provider.isGuest ? "Hello" : "Hello, ${provider.userName ?? ""}",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    );
+                  }
                 ),
 
                 SizedBox(width: 5),
@@ -60,18 +56,14 @@ class _HomeTabState extends State <HomeTab> {
 
                 Spacer(),
 
-                Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage(
-                        "assets/images/Bio.png",
-                      ),
-                      fit: BoxFit.cover
-                    )
-                  ),
+                Consumer<AuthrizationProvider>(
+                  builder: (context, provider, child) {
+                    return CircleAvatar(
+                      radius: 25,
+                      backgroundImage: provider.photoUrl != null && provider.photoUrl!.isNotEmpty ? NetworkImage(provider.photoUrl!) : null,
+                      child: provider.photoUrl == null || provider.photoUrl!.isEmpty ? Icon(Icons.person, size: 28,) : null
+                    );
+                  }
                 ),
               ],
             ),
@@ -83,27 +75,45 @@ class _HomeTabState extends State <HomeTab> {
 
             SizedBox(height: 20),
 
-            TextField(
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: AppColors.surface2,
-                hintText: "Search movies, genres.....",
-                hintStyle: TextStyle(color: AppColors.textSecondary),
-                prefixIcon: Icon(Icons.search, color: AppColors.textPrimary),
-                border: OutlineInputBorder(
+            GestureDetector(
+              onTap: () {
+                context.read<NavigationProvider>().updateIndex(1);  
+              },
+              child: Container(
+                width: double.infinity,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: AppColors.surface2,
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide(color: AppColors.border),
+                  border: Border.all(
+                    color: Colors.grey,
+                  )
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide(color: AppColors.border),
+                child: Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(left: 45),
+                      child: Text(
+                        "Search movies, genres.....",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide(color: AppColors.border, width: 2),
-                ),
-              ),
+              )
             ),
 
             SizedBox(height: 15),
@@ -129,55 +139,19 @@ class _HomeTabState extends State <HomeTab> {
             ),
 
             SizedBox(
-              height: 210,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: movies.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 100,
-                          height: 150,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Image.asset(
-                              movies[index]["image"],
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 10),
-
-                        Text(
-                          movies[index]["title"],
-                          style: TextStyle(color: Colors.white),
-                        ),
-
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.star,
-                              color: Colors.deepOrangeAccent,
-                              size: 15,
-                            ),
-
-                            SizedBox(width: 5),
-
-                            Text(
-                              movies[index]["rating"],
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+              height: 220,
+              child: Consumer<MovieProvider>(
+                builder: (context, provider, child) {
+                  return provider.homeLoading ? Center(child: CircularProgressIndicator(color: Colors.white,),) : 
+                  MovieHorizontalList(
+                    movies: provider.trendingMovies,
+                    onMovieTap: (movie) {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => MovieDetailScreen(movieId: movie.id),
+                      ));
+                    },
                   );
-                },
+                }
               ),
             ),
 
@@ -202,55 +176,19 @@ class _HomeTabState extends State <HomeTab> {
             ),
 
             SizedBox(
-              height: 210,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: movies.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 100,
-                          height: 150,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Image.asset(
-                              movies[index]["image"],
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 10),
-
-                        Text(
-                          movies[index]["title"],
-                          style: TextStyle(color: Colors.white),
-                        ),
-
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.star,
-                              color: Colors.deepOrangeAccent,
-                              size: 15,
-                            ),
-
-                            SizedBox(width: 5),
-
-                            Text(
-                              movies[index]["rating"],
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+              height: 220,
+              child: Consumer<MovieProvider>(
+                builder: (context, provider, child) {
+                  return provider.homeLoading ? Center(child: CircularProgressIndicator(color: Colors.white),) : 
+                  MovieHorizontalList(
+                    movies: provider.popularMovies,
+                    onMovieTap: (movie) {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => MovieDetailScreen(movieId: movie.id),
+                      ));
+                    },
                   );
-                },
+                }
               ),
             ),
 
@@ -275,55 +213,56 @@ class _HomeTabState extends State <HomeTab> {
             ),
 
             SizedBox(
-              height: 210,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: movies.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 100,
-                          height: 150,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Image.asset(
-                              movies[index]["image"],
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 10),
-
-                        Text(
-                          movies[index]["title"],
-                          style: TextStyle(color: Colors.white),
-                        ),
-
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.star,
-                              color: Colors.deepOrangeAccent,
-                              size: 15,
-                            ),
-
-                            SizedBox(width: 5),
-
-                            Text(
-                              movies[index]["rating"],
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+              height: 220,
+              child: Consumer<MovieProvider>(
+                builder: (context, provider, child) {
+                  return provider.homeLoading ? Center(child: CircularProgressIndicator(color: Colors.white),) : 
+                  MovieHorizontalList(
+                    movies: provider.topRatedMovies,
+                    onMovieTap: (movie) {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => MovieDetailScreen(movieId: movie.id),
+                      ));
+                    },
                   );
-                },
+                }
+              ),
+            ),
+
+            Row(
+              children: [
+                Text(
+                  "Up Coming Movies",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+
+                Spacer(),
+
+                TextButton(
+                  onPressed: () {},
+                  child: Text("See all", style: TextStyle(color: Colors.red)),
+                ),
+              ],
+            ),
+
+            SizedBox(
+              height: 220,
+              child: Consumer<MovieProvider>(
+                builder: (context, provider, child) {
+                  return provider.homeLoading ? Center(child: CircularProgressIndicator(color: Colors.white),) : 
+                  MovieHorizontalList(
+                    movies: provider.upcomingMovies,
+                    onMovieTap: (movie) {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => MovieDetailScreen(movieId: movie.id),
+                      ));
+                    },
+                  );
+                }
               ),
             ),
           ],

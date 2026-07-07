@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movie_recommendation_app/app_colors.dart';
+import 'package:movie_recommendation_app/utils/app_colors.dart';
 import 'package:movie_recommendation_app/home/favourites_tab.dart';
 import 'package:movie_recommendation_app/home/home_tab.dart';
 import 'package:movie_recommendation_app/home/profile_tab.dart';
@@ -23,8 +23,8 @@ class _HomeState extends State <Home> {
     screens = [
       HomeTab(), // Index 0
       SearchTab(), // Index 1
-      FavouritesTab(), // Index 2
-      ProfileTab()  // Index 3
+      FavouritesTab(), 
+      ProfileTab()  
     ];
   }
 
@@ -129,7 +129,7 @@ class _HomeState extends State <Home> {
                       ),
 
                       Text(
-                        "Favourites",
+                        "Favorites",
                         style: TextStyle(
                           color: provider.currentIndex == 2 ? AppColors.primary : AppColors.textSecondary,
                         ),

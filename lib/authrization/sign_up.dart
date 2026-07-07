@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movie_recommendation_app/app_colors.dart';
+import 'package:movie_recommendation_app/utils/app_colors.dart';
 import 'package:movie_recommendation_app/authrization/login.dart';
 import 'package:movie_recommendation_app/home/home.dart';
 import 'package:movie_recommendation_app/provider/authrization_provider.dart';

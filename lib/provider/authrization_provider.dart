@@ -7,12 +7,16 @@ import 'package:movie_recommendation_app/models/user_model.dart';
 class AuthrizationProvider extends ChangeNotifier {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore database = FirebaseFirestore.instance;
+  String? userName;
+  String? photoUrl;
   bool loading = false;
+  bool isGuest = false;
 
   Future <bool> login (String email, String password) async {
     showLoading(true);
     try {
       await auth.signInWithEmailAndPassword (email: email.trim(), password: password.trim());
+      await getCurrentUserData(); 
       return true;
     } 
     on FirebaseAuthException catch (e) {
@@ -34,9 +38,10 @@ class AuthrizationProvider extends ChangeNotifier {
   Future <bool> signUp (String name, String email, String password) async {
     showLoading(true);
     try {
-      final result = await auth.createUserWithEmailAndPassword (email: email.trim(), password: password.trim());
-      UserModel user = UserModel (result.user!.uid, name, email);
-      await database.collection("user").doc(result.user!.uid).set(user.toMap());
+      final result = await auth.createUserWithEmailAndPassword (email: email.trim(), password: password.trim()); 
+      UserModel user = UserModel (result.user!.uid, name, email, ""); 
+      await database.collection("user").doc(result.user!.uid).set(user.toMap()); 
+      await getCurrentUserData();
       return true;
     } on FirebaseAuthException catch (e) {
       scaffoldMessenger.currentState?.showSnackBar(SnackBar(
@@ -51,6 +56,24 @@ class AuthrizationProvider extends ChangeNotifier {
       return false;
     } finally {
       showLoading(false);
+    }
+  }
+
+  Future <void> getCurrentUserData () async {
+    try {
+      User? currentUser = auth.currentUser;  
+
+      if (currentUser == null) return;
+
+      DocumentSnapshot<Map<String, dynamic>> document = await database.collection("user").doc(currentUser.uid).get();
+
+      if (document.exists) {
+        userName = document.data()?["name"];
+        photoUrl = document.data()?["photoUrl"];
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint(e.toString());
     }
   }
 
@@ -85,6 +108,9 @@ class AuthrizationProvider extends ChangeNotifier {
     showLoading(true);
     try {
       await auth.signOut();
+      isGuest = false;
+      userName = null;
+      photoUrl = null;
     } on FirebaseAuthException catch (e) {
       scaffoldMessenger.currentState?.showSnackBar(SnackBar(
         content: Text(e.message ?? e.toString()),
@@ -99,7 +125,14 @@ class AuthrizationProvider extends ChangeNotifier {
     }
   }
 
-  showLoading (bool value) {
+  void enterGuestMode () {
+    isGuest = true;
+    userName = null;
+    photoUrl = null;
+    notifyListeners();
+  }
+
+  void showLoading (bool value) {
     loading = value;
     notifyListeners();
   }

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:movie_recommendation_app/authrization/login.dart';
 import 'package:movie_recommendation_app/authrization/sign_up.dart';
 import 'package:movie_recommendation_app/home/home.dart';
+import 'package:movie_recommendation_app/provider/authrization_provider.dart';
+import 'package:movie_recommendation_app/provider/navigation_provider.dart';
+import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -41,9 +44,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           backgroundColor: Colors.amberAccent,
                         ),
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(
+                          context.read<NavigationProvider>().resetIndex();
+                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
                             builder: (context) => Login(),
-                          ));
+                          ),(value) => false);
                         },
                         child: Text("Login", style: TextStyle(color: Colors.black87),),
                       ),
@@ -71,6 +75,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       
                     TextButton(
                       onPressed: () {
+                        context.read<AuthrizationProvider>().enterGuestMode();
+                        context.read<NavigationProvider>().resetIndex();
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
                           builder: (context) => Home(),
                         ),(value) => false);

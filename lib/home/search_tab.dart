@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:movie_recommendation_app/app_colors.dart';
+import 'package:movie_recommendation_app/movie_details_screen/movie_detail_screen.dart';
+import 'package:movie_recommendation_app/provider/movie_provider.dart';
+import 'package:movie_recommendation_app/provider/navigation_provider.dart';
+import 'package:movie_recommendation_app/utils/app_colors.dart';
+import 'package:provider/provider.dart';
+import 'dart:async'; 
 
 class SearchTab extends StatefulWidget {
   const SearchTab({super.key});
@@ -10,63 +15,74 @@ class SearchTab extends StatefulWidget {
 
 class _SearchTabState extends State<SearchTab> {
   TextEditingController searchController = TextEditingController();
-  List <Map<String, dynamic>> movies = [
-    {
-      "title" : "The Northman",
-      "rating" : "8.5",
-      "image" : "assets/images/The Northman.jpg" 
-    },
+  Timer? debounce;  
 
-    {
-      "title" : "The Northman 2",
-      "rating" : "6.5",
-      "image" : "assets/images/The Northman 2.jpg"
-    },
-
-    {
-      "title" : "The Odyssey",
-      "rating" : "9.5",
-      "image" : "assets/images/The Odyssey.jpg"
-    },
-
-    {
-      "title" : "The Odyssey 2",
-      "rating" : "8.2",
-      "image" : "assets/images/The Odyssey 2.jpg"
-    },
-  ];
+  @override
+  void dispose () {
+    debounce?.cancel();
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<MovieProvider>();
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text(
-          "Search Movies",
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 22,
-            fontWeight: FontWeight.bold
-          ),
-        ),
-        // centerTitle: true,
-        backgroundColor: Colors.black,
-      ),
       body: Padding(
         padding: EdgeInsets.all(15),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      context.read<NavigationProvider>().updateIndex(
+                        0,
+                      ); // Home Tab Screen
+                    },
+                    child: Icon(Icons.arrow_back, color: Colors.white),
+                  ),
+                  
+                  SizedBox(width: 15,),
+
+                  Text(
+                    "Search Movies",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+
+                ],
+              ),
+              
+              SizedBox(height: 20,),
+
               TextField(
                 controller: searchController,
                 style: TextStyle(color: Colors.white),
+                onChanged: (value) {
+                  if (debounce?.isActive ?? false) { 
+                    debounce!.cancel();
+                  }
+
+                  debounce = Timer(  
+                    const Duration(milliseconds: 500),
+                    () {
+                      provider.searchMovie(value);
+                    }
+                  );
+                },
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: AppColors.surface2,
-                  hintText: "Search for Movies",
-                  hintStyle: TextStyle(color: AppColors.textSecondary),
-                  prefixIcon: Icon(Icons.search, color: AppColors.textPrimary,),
+                  hintText: "Search Movies",
+                  hintStyle: TextStyle(color: AppColors.textPrimary),
+                  prefixIcon: Icon(Icons.search, color: AppColors.textPrimary),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide(color: AppColors.border),
@@ -85,139 +101,6 @@ class _SearchTabState extends State<SearchTab> {
               SizedBox(height: 20,),
 
               Text(
-                "Popular Searches",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-
-              SizedBox(height: 10,),
-
-              Row(
-                children: [
-                  Container(
-                    height: 35,
-                    width: 85,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: AppColors.surface2,
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Avengers",
-                        style: TextStyle(
-                          color: AppColors.textPrimary
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(width: 7,),
-
-                  Container(
-                    height: 35,
-                    width: 87,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: AppColors.surface2,
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Spider-Man",
-                        style: TextStyle(
-                          color: AppColors.textPrimary
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(width: 7,),
-
-                  Container(
-                    height: 35,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: AppColors.surface2,
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Batman",
-                        style: TextStyle(
-                          color: AppColors.textPrimary
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(width: 7,),
-
-                  Container(
-                    height: 35,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: AppColors.surface2,
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Inception",
-                        style: TextStyle(
-                          color: AppColors.textPrimary
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-
-              SizedBox(height: 10,),
-
-              Row(
-                children: [
-                  Container(
-                    height: 35,
-                    width: 88,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: AppColors.surface2,
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Interstallar",
-                        style: TextStyle(
-                          color: AppColors.textPrimary
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(width: 7,),
-
-                  Container(
-                    height: 35,
-                    width: 92,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: AppColors.surface2,
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Harry-Potter",
-                        style: TextStyle(
-                          color: AppColors.textPrimary
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 25,),
-
-              Text(
                 "Search Results",
                 style: TextStyle(
                   fontSize: 18,
@@ -226,82 +109,119 @@ class _SearchTabState extends State<SearchTab> {
                 ),
               ),
 
-              SizedBox(height: 10,),
+              SizedBox(height: 20,),
 
-              ListView.builder(
-                itemCount: movies.length,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsetsGeometry.only(bottom: 10),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        // color: Colors.grey[850],
-                        color: AppColors.surface2,
+              if (provider.searchLoading)
+                Center(
+                  child: CircularProgressIndicator(color: Colors.white,),
+                )
+              else if (!provider.hasSearched) 
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Text(
+                      "Start typing to search movies",
+                      style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 16
                       ),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadiusGeometry.circular(20),
-                            child: Image.asset(
-                              movies[index]["image"],
-                              fit: BoxFit.cover,
-                              width: 80,
-                              height: 100,
-                            ),
+                    ),
+                  ),
+                )
+              else if (provider.searchMovies.isEmpty)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    child: Text(
+                      "No Movies Found",
+                      style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 16
+                      ),
+                    ),
+                  ),
+                )
+              else        
+                ListView.builder(
+                  itemCount: provider.searchMovies.length,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsetsGeometry.only(bottom: 10),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => MovieDetailScreen(movieId: provider.searchMovies[index].id),
+                          ));
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: AppColors.surface2,
                           ),
-                    
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: Text(
-                                    movies[index]["title"],
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
-                                    ),
-                                  ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadiusGeometry.circular(20),
+                                child: Image.network(
+                                  "https://image.tmdb.org/t/p/w500${provider.searchMovies[index].posterPath}",
+                                  fit: BoxFit.cover,
+                                  width: 80,
+                                  height: 100,
                                 ),
-                    
-                                Row(
+                              ),
+                        
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(left: 5),
-                                      child: Icon(
-                                        Icons.star,
-                                        color: AppColors.accent,
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Text(
+                                        provider.searchMovies[index].title,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.textPrimary,
+                                        ),
                                       ),
                                     ),
-                    
-                                    SizedBox(width: 1),
-                    
-                                    Text(
-                                      movies[index]["rating"],
-                                      style: TextStyle(color: AppColors.textPrimary),
+                        
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 5),
+                                          child: Icon(
+                                            Icons.star,
+                                            color: AppColors.accent,
+                                          ),
+                                        ),
+                        
+                                        SizedBox(width: 1),
+                        
+                                        Text(
+                                          provider.searchMovies[index].rating.toStringAsFixed(1),
+                                          style: TextStyle(color: AppColors.textPrimary),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
+                              ),
+                        
+                              Padding(
+                                padding: EdgeInsetsGeometry.only(right: 8),
+                                child: Icon(Icons.bookmark_border, color: Colors.white),
+                              ),
+                            ],
                           ),
-                    
-                          Padding(
-                            padding: EdgeInsetsGeometry.only(right: 8),
-                            child: Icon(Icons.bookmark_border, color: Colors.white),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
+                    );
+                  },
+                ),              
             ],
           ),
         ),

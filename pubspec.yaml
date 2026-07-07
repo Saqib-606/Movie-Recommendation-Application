@@ -39,6 +39,7 @@ dependencies:
   firebase_auth: ^6.5.4
   cloud_firestore: ^6.6.0
   dio: ^5.9.2
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:

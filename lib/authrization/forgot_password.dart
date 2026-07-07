@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movie_recommendation_app/app_colors.dart';
+import 'package:movie_recommendation_app/utils/app_colors.dart';
 import 'package:movie_recommendation_app/authrization/login.dart';
 import 'package:movie_recommendation_app/provider/authrization_provider.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +20,6 @@ class _ForgotPasswordState extends State <ForgotPassword> {
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          // Top Image
           Expanded(
             flex: 6,
             child: Image.asset(
@@ -31,7 +30,6 @@ class _ForgotPasswordState extends State <ForgotPassword> {
             )
           ),
 
-          // Container Section
           Expanded(
             flex: 8,
             child: Transform.translate(

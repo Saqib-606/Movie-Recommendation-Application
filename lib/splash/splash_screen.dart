@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_recommendation_app/home/home.dart';
+import 'package:movie_recommendation_app/provider/authrization_provider.dart';
 import 'package:movie_recommendation_app/welcome/welcome_screen.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -26,6 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     } else {
       if (mounted) {
+        await context.read<AuthrizationProvider>().getCurrentUserData();
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => Home()),

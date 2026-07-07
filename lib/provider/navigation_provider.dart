@@ -7,4 +7,9 @@ class NavigationProvider extends ChangeNotifier {
     currentIndex = updatedIndex;
     notifyListeners();
   }
+
+  void resetIndex () {
+    currentIndex = 0;
+    notifyListeners();
+  }
 }
