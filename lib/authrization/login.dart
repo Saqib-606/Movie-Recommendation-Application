@@ -1,4 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_recommendation_app/provider/BackgroundImageProvider.dart';
+import 'package:movie_recommendation_app/provider/favorite_provider.dart';
+import 'package:movie_recommendation_app/provider/watchlist_provider.dart';
 import 'package:movie_recommendation_app/utils/app_colors.dart';
 import 'package:movie_recommendation_app/authrization/forgot_password.dart';
 import 'package:movie_recommendation_app/authrization/sign_up.dart';
@@ -28,10 +32,43 @@ class _LoginState extends State<Login> {
           // Top Image
           Expanded(
             flex: 6,
-            child: Image.asset(
-              "assets/images/The Odyssey.jpg",
-              fit: BoxFit.cover,
-              width: double.infinity,
+            child: Consumer<Backgroundimageprovider>(
+              builder: (context, provider, child) {
+                if (provider.backgroundImages.isEmpty) {
+                  return Image.asset(
+                    "assets/images/The Odyssey.jpg",
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  );
+                }
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 800),
+                  child: CachedNetworkImage(
+                    imageUrl: provider.backgroundImages[provider.currentIndex],
+                    key: ValueKey(
+                      provider.backgroundImages[provider.currentIndex],
+                    ),
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.amberAccent,
+                        ),
+                      );
+                    },
+                    errorWidget: (context, url, error) {
+                      return Image.asset(
+                        "assets/images/The Odyssey.jpg",
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                );
+              }
             )
           ),
 
@@ -203,12 +240,15 @@ class _LoginState extends State<Login> {
                         height: 50,
                         child: Consumer<AuthrizationProvider>(
                           builder: (context, provider, child) {
-                            return provider.loading ? Center(child: CircularProgressIndicator(),) :
+                            return provider.loading ? Center(child: CircularProgressIndicator(color: Colors.white,),) :
                             ElevatedButton(
                               onPressed: () async {
                                 if (formkey.currentState!.validate()) {
                                   bool sucess = await provider.login(email.text, password.text); 
                                   if (sucess) {
+                                    await context.read<FavoriteProvider>().loadUserFavorites();
+                                    await context.read<WatchlistProvider>().loadUserWatchlist();
+                                    context.read<Backgroundimageprovider>().stopAutoSlide();
                                     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
                                       builder: (context) => Home(),
                                     ), (value) => false);

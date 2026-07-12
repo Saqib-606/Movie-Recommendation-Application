@@ -3,12 +3,13 @@ import 'package:movie_recommendation_app/main.dart';
 import 'package:movie_recommendation_app/models/favorite_model.dart';
 import 'package:movie_recommendation_app/provider/favorite_provider.dart';
 import 'package:movie_recommendation_app/provider/movie_provider.dart';
-import 'package:movie_recommendation_app/utils/app_colors.dart';
+import 'package:movie_recommendation_app/provider/watchlist_provider.dart';
+import 'package:movie_recommendation_app/utils/app_colors.dart'; 
 import 'package:provider/provider.dart';
 
 class MovieDetailScreen extends StatefulWidget {
-  const MovieDetailScreen({super.key, required this.movieId});
   final int movieId;
+  const MovieDetailScreen({super.key, required this.movieId});
 
   @override
   State<MovieDetailScreen> createState () => _MovieDetailScreenState();
@@ -31,11 +32,13 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       body: Consumer<MovieProvider>(
         builder: (context, provider, child) {
           final favoriteProvider = context.watch<FavoriteProvider>();
+          final watchListProvider = context.watch<WatchlistProvider>();
           if (provider.detailLoading) {
             return Center(child: CircularProgressIndicator(color: Colors.white,),);
           }
           final movie = provider.movieDetails;
           final isFavorite = favoriteProvider.isFavorite(movie!.id);
+          final isWatchlist = watchListProvider.isWatchlisted(movie.id);
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,7 +156,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       SizedBox(width: 10,),
                   
                       Text(
-                        movie.releaseDate.isNotEmpty ? movie.releaseDate.substring(0 ,4) : "N/A", 
+                        movie.releaseDate.isNotEmpty ? movie.releaseDate.substring(0 ,4) : "N/A",
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600
@@ -167,7 +170,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       SizedBox(width: 10,),
                   
                       Text(
-                        "${movie.runtime ~/ 60}h ${movie.runtime % 60}m", 
+                        "${movie.runtime ~/ 60}h ${movie.runtime % 60}m",
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600
@@ -273,21 +276,36 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           child: ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
                               alignment: Alignment.centerLeft,
-                              backgroundColor: AppColors.surface2,
+                              backgroundColor: isWatchlist ? AppColors.primary : AppColors.surface2,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadiusGeometry.circular(10),
                               ),
                             ),
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                duration: Duration(seconds: 2),
-                                content: Text("Feature coming soon...."),
-                              ));
+                            onPressed: () async {
+                              if (isWatchlist) {
+                                await watchListProvider.removeWatchlist(movie.id);
+                                scaffoldMessenger.currentState?.showSnackBar(SnackBar(
+                                  content: Text("Removed from Watchlist"),
+                                ));
+                              } else {
+                                await watchListProvider.addWatchlist(
+                                  FavoriteModel(
+                                    id : movie.id,
+                                    title: movie.title,
+                                    rating: movie.rating,
+                                    posterPath: movie.posterPath
+                                  )
+                                );
+                                scaffoldMessenger.currentState?.showSnackBar(SnackBar(
+                                  backgroundColor: AppColors.primary,
+                                  content: Text("Added to Watchlist"),
+                                ));
+                              }
                             },
                             icon: Padding(
                               padding: const EdgeInsets.only(left: 20),
                               child: Icon(
-                                Icons.add,
+                                isWatchlist ? Icons.bookmark : Icons.bookmark_border,
                                 size: 25,
                                 color: AppColors.textPrimary,
                               ),
@@ -296,7 +314,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Watchlist",
+                                  isWatchlist ? "Saved" : "Watchlist",
                                   style: TextStyle(color: AppColors.textPrimary),
                                 ),
                               ],
@@ -307,7 +325,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     ],
                   ),
                 ),
-          
+
                 SizedBox(height: 15,),
           
                 Padding(
@@ -390,7 +408,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                     }
 
                                     return Center(
-                                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white,), 
+                                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white,),
                                     );
                                   },
                                   errorBuilder: (context, error, stackTrace) { 

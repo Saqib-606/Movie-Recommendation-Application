@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:movie_recommendation_app/main.dart';
+import 'package:movie_recommendation_app/models/favorite_model.dart';
 import 'package:movie_recommendation_app/movie_details_screen/movie_detail_screen.dart';
 import 'package:movie_recommendation_app/provider/movie_provider.dart';
 import 'package:movie_recommendation_app/provider/navigation_provider.dart';
+import 'package:movie_recommendation_app/provider/watchlist_provider.dart';
 import 'package:movie_recommendation_app/utils/app_colors.dart';
 import 'package:provider/provider.dart';
 import 'dart:async'; 
@@ -15,7 +18,7 @@ class SearchTab extends StatefulWidget {
 
 class _SearchTabState extends State<SearchTab> {
   TextEditingController searchController = TextEditingController();
-  Timer? debounce;  
+  Timer? debounce; 
 
   @override
   void dispose () {
@@ -70,7 +73,7 @@ class _SearchTabState extends State<SearchTab> {
                     debounce!.cancel();
                   }
 
-                  debounce = Timer(  
+                  debounce = Timer( 
                     const Duration(milliseconds: 500),
                     () {
                       provider.searchMovie(value);
@@ -115,7 +118,7 @@ class _SearchTabState extends State<SearchTab> {
                 Center(
                   child: CircularProgressIndicator(color: Colors.white,),
                 )
-              else if (!provider.hasSearched) 
+              else if (!provider.hasSearched)
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
@@ -211,9 +214,44 @@ class _SearchTabState extends State<SearchTab> {
                                 ),
                               ),
                         
-                              Padding(
-                                padding: EdgeInsetsGeometry.only(right: 8),
-                                child: Icon(Icons.bookmark_border, color: Colors.white),
+                              Consumer<WatchlistProvider>(
+                                builder: (context, watchListprovider, child) {
+                                  final movie = provider.searchMovies[index]; 
+                                  final isWatchlist = watchListprovider.watchListMovies.any(
+                                    (item) => item.id == movie.id
+                                  );
+                                  return Padding(
+                                    padding: EdgeInsetsGeometry.only(right: 8),
+                                    child: InkWell(
+                                      onTap: () async {
+                                        if (isWatchlist) {
+                                          await watchListprovider.removeWatchlist(movie.id);
+                                          scaffoldMessenger.currentState?.showSnackBar(SnackBar(
+                                            content: Text("Removed from Watchlist"),
+                                          ));
+                                        } else {
+                                          await watchListprovider.addWatchlist(
+                                            FavoriteModel(
+                                              id: movie.id,
+                                              title: movie.title,
+                                              rating: movie.rating,
+                                              posterPath: movie.posterPath
+                                            )
+                                          );
+                                          scaffoldMessenger.currentState?.showSnackBar(SnackBar(
+                                            backgroundColor: AppColors.primary,
+                                            content: Text("Added to Watchlist"),
+                                          ));
+                                        }                                        
+                                      },
+                                      child: Icon(
+                                        Icons.bookmark_border,
+                                        size: 30,
+                                        color: isWatchlist ? Colors.red : Colors.white
+                                      ),
+                                    ),
+                                  );
+                                }
                               ),
                             ],
                           ),

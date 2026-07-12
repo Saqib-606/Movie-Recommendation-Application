@@ -3,7 +3,7 @@ import 'package:movie_recommendation_app/models/movie_model.dart';
 
 class MovieCard extends StatelessWidget {
   const MovieCard({super.key, required this.movie, required this.onTap});
-  final MovieModel movie;  // Har MovieCard ke paas apni ek movie hogi.
+  final MovieModel movie;  
   final VoidCallback onTap;
 
   @override
@@ -56,9 +56,6 @@ class MovieCard extends StatelessWidget {
           ],
         ),
       ),
-      
     );
   }
 }
-
-

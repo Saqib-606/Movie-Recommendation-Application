@@ -1,6 +1,8 @@
 # 🎬 Movie Recommendation App
 
-A modern **Movie Recommendation Application** built with **Flutter**, featuring **Firebase Authentication**, **TMDB API Integration**, **Provider State Management**, and a clean, responsive UI. The app allows users to browse popular movies, search for movies, view detailed information, manage favorites, and maintain their profile.
+A modern and responsive **Movie Recommendation Application** built with **Flutter**, powered by **Firebase Authentication**, **Cloud Firestore**, **TMDB API**, and **Provider State Management**.
+
+The application enables users to explore trending and popular movies, search for their favorite titles, view detailed movie information, manage favorites and watchlists, and enjoy a smooth, user-friendly experience with offline support.
 
 ---
 
@@ -8,46 +10,65 @@ A modern **Movie Recommendation Application** built with **Flutter**, featuring 
 
 ### 🔐 Authentication
 - User Registration
-- User Login
+- Secure Login
+- Guest Mode
+- Password Reset
 - Secure Logout
 - Firebase Authentication
 
-### 🎥 Movies
-- Browse Popular Movies
-- View Movie Details
-- Movie Poster & Backdrop
+### 🎥 Movie Browsing
+- Trending Movies
+- Popular Movies
+- Movies by Category
+- Movie Details
 - Movie Overview
 - Release Date
-- Ratings
 - Runtime
+- Ratings
 - Genres
 - Cast Information
+- High Quality Posters & Backdrops
 
 ### 🔍 Search
-- Search Movies by Name
+- Real-time Movie Search
 - Dynamic Search Results
+- Movie Detail Navigation
 
 ### ❤️ Favorites
 - Add Movies to Favorites
 - Remove Movies from Favorites
-- Persistent Favorites using Provider
+- Guest Favorites Support
+- Firebase Synced Favorites
+- Persistent Local Storage
 
-### 👤 Profile
+### 📑 Watchlist
+- Add Movies to Watchlist
+- Remove Movies from Watchlist
+- Guest Watchlist Support
+- Firebase Synced Watchlist
+- Persistent Local Storage
+
+### 👤 User Profile
 - Display User Information
-- Profile Picture Support
+- Dynamic User Profile
+- About App Section
 - Logout
 
-### 🎨 UI
-- Modern & Responsive Design
-- Bottom Navigation
+### 🎨 User Interface
+- Modern Dark Theme
+- Responsive Layout
+- Smooth Navigation
+- Bottom Navigation Bar
 - Custom Widgets
 - Loading Indicators
 - Error Handling
+- Clean UI Design
 
 ### ⚙️ State Management
 - Provider Architecture
-- Clean Code Structure
-- Reusable Components
+- Modular Project Structure
+- Reusable Widgets
+- Clean Code Organization
 
 ---
 
@@ -56,9 +77,12 @@ A modern **Movie Recommendation Application** built with **Flutter**, featuring 
 - Flutter
 - Dart
 - Firebase Authentication
+- Cloud Firestore
 - TMDB REST API
 - Dio
 - Provider
+- Shared Preferences
+- Connectivity Plus
 - Material Design
 
 ---
@@ -84,36 +108,37 @@ lib/
 
 ---
 
-## 🚀 Current Progress
+## 🚀 Implemented Features
 
-- ✅ Firebase Authentication
 - ✅ Splash Screen
-- ✅ Login & Sign Up
-- ✅ Bottom Navigation
+- ✅ Firebase Authentication
+- ✅ Login & Registration
+- ✅ Guest User Mode
+- ✅ Password Reset
 - ✅ Home Screen
-- ✅ Movie API Integration
+- ✅ Trending Movies
 - ✅ Popular Movies
-- ✅ Movie Details Screen
+- ✅ Movie Details
 - ✅ Cast Information
-- ✅ Search Functionality
+- ✅ Search Movies
 - ✅ Favorites
+- ✅ Watchlist
 - ✅ Profile Screen
-- ✅ Provider State Management
+- ✅ About App Screen
+- ✅ Firebase Firestore Integration
 - ✅ Responsive UI
-- 🔄 Watchlist
-- 🔄 Firestore Integration
-- 🔄 Offline Caching
+- ✅ Provider State Management
 
 ---
 
-<h2>📸 Screens</h2>
+## 📱 Application Screens
 
 <p align="center">
-  <img src="assets/screenshots/screenshot_1.png" width="220"/>
-  <img src="assets/screenshots/screenshot_2.png" width="220"/>
-  <img src="assets/screenshots/screenshot_3.png" width="220"/>
+  <img src="assets/screenshots/Welcome_Screen.png" alt="Welcome Screen" width="190"/>
+  <img src="assets/screenshots/Login_Screen.png" alt="Login Screen" width="190"/>
+  <img src="assets/screenshots/Home_Screen.png" alt="Home Screen" width="190"/>
+  <img src="assets/screenshots/About_App_Screen.png" alt="About App Screen" width="190"/>
 </p>
-
 
 ---
 
@@ -121,7 +146,7 @@ lib/
 
 This project uses the **TMDB API**.
 
-For security reasons, the actual API key is **not included** in this repository.
+For security reasons, the API key is **not included** in this repository.
 
 Create the following file:
 
@@ -135,28 +160,13 @@ using:
 lib/constants/api_constants.example.dart
 ```
 
-Then replace:
+Replace:
 
 ```dart
 YOUR_API_KEY_HERE
 ```
 
 with your own TMDB API key.
-
----
-
-## 📌 Future Improvements
-
-- Watchlist
-- Movie Recommendations
-- Similar Movies
-- Trailer Support
-- Ratings & Reviews
-- Dark / Light Theme
-- Firebase Firestore Sync
-- Offline Storage
-- Pagination
-- Infinite Scrolling
 
 ---
 
@@ -170,4 +180,4 @@ Flutter Developer
 
 ## 📄 License
 
-This project is developed for learning and educational purposes.
+This project is created for learning, educational, and portfolio purposes.

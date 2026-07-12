@@ -11,11 +11,12 @@ class ApiService {
       baseUrl: ApiConstants.baseUrl,
       headers: { 
         "Authorization" : "Bearer ${ApiConstants.bearerToken}",
-        "accept" : "application/json"
+        "accept" : "application/json" 
       }
     )
   );
 
+  // Generic Reusable Method 
   Future <List<MovieModel>> getMovies (String endpoint) async {  
     final response = await dio.get(endpoint); 
     List<MovieModel> movies = (response.data["results"] as List).map((movie) => MovieModel.fromJson(movie)).toList();
@@ -54,4 +55,20 @@ class ApiService {
     List<SearchModel> movies = (response.data["results"] as List).map((movie) => SearchModel.fromJson(movie)).toList();
     return movies;
   } 
+
+  Future<List<String>> getWelcomeBackgroundImages () async {
+    final response = await dio.get("/movie/popular");
+
+    List movies = response.data["results"];
+
+    List<String> backgroundImages = movies
+        .where((movie) => movie["backdrop_path"] != null) 
+        .take(15)  
+        .map<String>((movie) { 
+          return "https://image.tmdb.org/t/p/original${movie["backdrop_path"]}"; 
+        })
+        .toList();
+
+    return backgroundImages;
+  }
 }

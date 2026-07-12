@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_recommendation_app/home/see_all_movies.dart';
 import 'package:movie_recommendation_app/movie_details_screen/movie_detail_screen.dart';
 import 'package:movie_recommendation_app/provider/authrization_provider.dart';
 import 'package:movie_recommendation_app/provider/movie_provider.dart';
@@ -6,6 +7,7 @@ import 'package:movie_recommendation_app/provider/navigation_provider.dart';
 import 'package:movie_recommendation_app/utils/app_colors.dart';
 import 'package:movie_recommendation_app/widgets/movie_horizontal_list.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -40,7 +42,7 @@ class _HomeTabState extends State <HomeTab> {
                 Consumer<AuthrizationProvider>(
                   builder: (context, provider, child) {
                     return Text(
-                      provider.isGuest ? "Hello" : "Hello, ${provider.userName ?? ""}",
+                      provider.isGuest ? "Welcome" : "Welcome, ${provider.userName ?? ""}",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -58,10 +60,81 @@ class _HomeTabState extends State <HomeTab> {
 
                 Consumer<AuthrizationProvider>(
                   builder: (context, provider, child) {
-                    return CircleAvatar(
-                      radius: 25,
-                      backgroundImage: provider.photoUrl != null && provider.photoUrl!.isNotEmpty ? NetworkImage(provider.photoUrl!) : null,
-                      child: provider.photoUrl == null || provider.photoUrl!.isEmpty ? Icon(Icons.person, size: 28,) : null
+                    return GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: AppColors.surface2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadiusGeometry.vertical(top: Radius.circular(25))
+                          ),
+                          builder: (context) {
+                            return SafeArea(
+                              child: SizedBox(
+                                height: 180,
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: 45,
+                                        height: 5,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          color: AppColors.textPrimary
+                                        ),
+                                      ),
+
+                                      SizedBox(height: 10,),
+                                
+                                      ListTile(
+                                        leading: const Icon(Icons.photo_library),
+                                        title: Text(
+                                          "Change Photo",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.textPrimary
+                                          ),
+                                        ),
+                                        onTap: () async {
+                                          Navigator.pop(context);
+                                          await provider.pickProfileImage();
+                                        },
+                                      ),
+
+                                      SizedBox(height: 5,),
+                                
+                                      ListTile(
+                                        leading: const Icon(Icons.delete, color: Colors.red),
+                                        title: Text(
+                                          "Remove Photo",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.textPrimary
+                                          ),
+                                        ),
+                                        onTap: () async {
+                                          Navigator.pop(context);
+                                          await provider.removeProfileImage();
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );    
+                      },
+                      child: CircleAvatar(
+                        radius: 25,
+                        backgroundImage: provider.profileImagePath != null ? FileImage(File(provider.profileImagePath!)) as ImageProvider :
+                        provider.photoUrl != null && provider.photoUrl!.isNotEmpty ? NetworkImage(provider.photoUrl!) : null,
+                        child: provider.profileImagePath == null && (provider.photoUrl == null || provider.photoUrl!.isEmpty) ?
+                        const Icon(Icons.person, size: 28,) : null
+                      ),
                     );
                   }
                 ),
@@ -77,7 +150,7 @@ class _HomeTabState extends State <HomeTab> {
 
             GestureDetector(
               onTap: () {
-                context.read<NavigationProvider>().updateIndex(1);  
+                context.read<NavigationProvider>().updateIndex(1); 
               },
               child: Container(
                 width: double.infinity,
@@ -121,7 +194,7 @@ class _HomeTabState extends State <HomeTab> {
             Row(
               children: [
                 Text(
-                  "Trending This Week",
+                  "Trending Movies",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -132,7 +205,12 @@ class _HomeTabState extends State <HomeTab> {
                 Spacer(),
 
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    final provider = context.read<MovieProvider>();
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => SeeAllMovies(title: "Trending Movies", movies: provider.trendingMovies)
+                    ));
+                  },
                   child: Text("See all", style: TextStyle(color: Colors.red)),
                 ),
               ],
@@ -144,7 +222,7 @@ class _HomeTabState extends State <HomeTab> {
                 builder: (context, provider, child) {
                   return provider.homeLoading ? Center(child: CircularProgressIndicator(color: Colors.white,),) : 
                   MovieHorizontalList(
-                    movies: provider.trendingMovies,
+                    movies: provider.trendingMovies.take(10).toList(),
                     onMovieTap: (movie) {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) => MovieDetailScreen(movieId: movie.id),
@@ -158,7 +236,7 @@ class _HomeTabState extends State <HomeTab> {
             Row(
               children: [
                 Text(
-                  "Movies For Your Mood",
+                  "Popular Movies",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -169,7 +247,12 @@ class _HomeTabState extends State <HomeTab> {
                 Spacer(),
 
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    final provider = context.read<MovieProvider>();
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => SeeAllMovies(title: "Popular Movies", movies: provider.popularMovies),
+                    ));
+                  },
                   child: Text("See all", style: TextStyle(color: Colors.red)),
                 ),
               ],
@@ -181,7 +264,7 @@ class _HomeTabState extends State <HomeTab> {
                 builder: (context, provider, child) {
                   return provider.homeLoading ? Center(child: CircularProgressIndicator(color: Colors.white),) : 
                   MovieHorizontalList(
-                    movies: provider.popularMovies,
+                    movies: provider.popularMovies.take(10).toList(),
                     onMovieTap: (movie) {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) => MovieDetailScreen(movieId: movie.id),
@@ -195,7 +278,7 @@ class _HomeTabState extends State <HomeTab> {
             Row(
               children: [
                 Text(
-                  "Recommended For You",
+                  "Top Rated Movies",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -206,7 +289,12 @@ class _HomeTabState extends State <HomeTab> {
                 Spacer(),
 
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    final provider = context.read<MovieProvider>(); 
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => SeeAllMovies(title: "Top Rated Movies", movies: provider.topRatedMovies),
+                    ));
+                  },
                   child: Text("See all", style: TextStyle(color: Colors.red)),
                 ),
               ],
@@ -218,7 +306,7 @@ class _HomeTabState extends State <HomeTab> {
                 builder: (context, provider, child) {
                   return provider.homeLoading ? Center(child: CircularProgressIndicator(color: Colors.white),) : 
                   MovieHorizontalList(
-                    movies: provider.topRatedMovies,
+                    movies: provider.topRatedMovies.take(10).toList(),
                     onMovieTap: (movie) {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) => MovieDetailScreen(movieId: movie.id),
@@ -232,7 +320,7 @@ class _HomeTabState extends State <HomeTab> {
             Row(
               children: [
                 Text(
-                  "Up Coming Movies",
+                  "Upcoming Movies",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -243,7 +331,12 @@ class _HomeTabState extends State <HomeTab> {
                 Spacer(),
 
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    final provider = context.read<MovieProvider>();
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => SeeAllMovies(title: "Upcoming Movies", movies: provider.upcomingMovies),
+                    ));
+                  },
                   child: Text("See all", style: TextStyle(color: Colors.red)),
                 ),
               ],
@@ -255,7 +348,7 @@ class _HomeTabState extends State <HomeTab> {
                 builder: (context, provider, child) {
                   return provider.homeLoading ? Center(child: CircularProgressIndicator(color: Colors.white),) : 
                   MovieHorizontalList(
-                    movies: provider.upcomingMovies,
+                    movies: provider.upcomingMovies.take(10).toList(),
                     onMovieTap: (movie) {
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) => MovieDetailScreen(movieId: movie.id),

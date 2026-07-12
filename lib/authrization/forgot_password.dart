@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_recommendation_app/provider/BackgroundImageProvider.dart';
 import 'package:movie_recommendation_app/utils/app_colors.dart';
 import 'package:movie_recommendation_app/authrization/login.dart';
 import 'package:movie_recommendation_app/provider/authrization_provider.dart';
@@ -22,11 +24,43 @@ class _ForgotPasswordState extends State <ForgotPassword> {
         children: [
           Expanded(
             flex: 6,
-            child: Image.asset(
-              "assets/images/The Odyssey.jpg",
-              fit: BoxFit.cover,
-              width: double.infinity,
-              // height: 700,
+            child: Consumer<Backgroundimageprovider>(
+              builder: (context, provider, child) {
+                if (provider.backgroundImages.isEmpty) {
+                  return Image.asset(
+                    "assets/images/The Odyssey.jpg",
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  );
+                }
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 800),
+                  child: CachedNetworkImage(
+                    imageUrl: provider.backgroundImages[provider.currentIndex],
+                    key: ValueKey(
+                      provider.backgroundImages[provider.currentIndex],
+                    ),
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.amberAccent,
+                        ),
+                      );
+                    },
+                    errorWidget: (context, url, error) {
+                      return Image.asset(
+                        "assets/images/The Odyssey.jpg",
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                );
+              }
             )
           ),
 

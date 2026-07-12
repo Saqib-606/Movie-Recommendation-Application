@@ -15,7 +15,7 @@ class MovieHorizontalList extends StatelessWidget {
       itemBuilder: (context, index) {
         final movie = movies[index];
         return MovieCard(
-          movie: movie,  // Single Movie
+          movie: movie,
           onTap: () {
             onMovieTap(movie);
           },

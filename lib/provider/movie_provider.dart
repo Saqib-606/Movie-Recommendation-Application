@@ -8,7 +8,7 @@ import 'package:movie_recommendation_app/models/search_model.dart';
 import 'package:movie_recommendation_app/services/api_service.dart';
 
 class MovieProvider extends ChangeNotifier {
-  final ApiService api = ApiService();  
+  final ApiService api = ApiService(); 
 
   bool homeLoading = false;
   List<MovieModel> popularMovies = []; 
@@ -18,7 +18,7 @@ class MovieProvider extends ChangeNotifier {
 
   bool detailLoading = false;  
   MovieDetailModel ? movieDetails; 
-
+ 
   List<CastModel> movieCast = [];
 
   List<SearchModel> searchMovies = [];
@@ -123,7 +123,7 @@ class MovieProvider extends ChangeNotifier {
   Future <void> getTopRatedMovies () {
     return fetchMovies(
       api.getTopRatedMovies, 
-      (movies) {  
+      (movies) {  // 2nd Parameter
         topRatedMovies = movies;
       }
     );

@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_recommendation_app/provider/BackgroundImageProvider.dart';
 import 'package:movie_recommendation_app/utils/app_colors.dart';
 import 'package:movie_recommendation_app/authrization/login.dart';
 import 'package:movie_recommendation_app/home/home.dart';
@@ -28,12 +30,44 @@ class _SignUpScreenState extends State <SignUp> {
       body: Column(
         children: [
           Expanded(
-            flex: 5,
-            child: Image.asset(
-              "assets/images/The Odyssey.jpg",
-              fit: BoxFit.cover,
-              width: double.infinity,
-              // height: 700,
+            flex: 6,
+            child: Consumer<Backgroundimageprovider>(
+              builder: (context, provider, child) {
+                if (provider.backgroundImages.isEmpty) {
+                  return Image.asset(
+                    "assets/images/The Odyssey.jpg",
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  );
+                }
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 800),
+                  child: CachedNetworkImage(
+                    imageUrl: provider.backgroundImages[provider.currentIndex],
+                    key: ValueKey(
+                      provider.backgroundImages[provider.currentIndex],
+                    ),
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.amberAccent,
+                        ),
+                      );
+                    },
+                    errorWidget: (context, url, error) {
+                      return Image.asset(
+                        "assets/images/The Odyssey.jpg",
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                );
+              }
             )
           ),
 
@@ -275,12 +309,13 @@ class _SignUpScreenState extends State <SignUp> {
                         height: 50,
                         child: Consumer<AuthrizationProvider>(
                           builder: (context, provider, child) {
-                            return provider.loading ? Center(child: CircularProgressIndicator(),) : 
+                            return provider.loading ? Center(child: CircularProgressIndicator(color: Colors.white,),) : 
                             ElevatedButton(
                               onPressed: () async {
                                 if (formkey.currentState!.validate()) {
                                   bool success = await provider.signUp(name.text, email.text, password.text);
                                   if (success) {
+                                    context.read<Backgroundimageprovider>().stopAutoSlide();
                                     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
                                       builder: (context) => Home(),
                                     ), (value) => false);
