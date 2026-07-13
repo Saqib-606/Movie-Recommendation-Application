@@ -69,8 +69,13 @@ class _ProfileTabState extends State<ProfileTab> {
                                           ),
                                         ),
                                         onTap: () async {
+                                          bool isPicked = await provider.pickProfileImage();
                                           Navigator.pop(context);
-                                          await provider.pickProfileImage();
+                                          if (isPicked) {
+                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                              content: Text("Profile Picture Added"),
+                                            ));
+                                          }
                                         },
                                       ),
 
@@ -89,6 +94,9 @@ class _ProfileTabState extends State<ProfileTab> {
                                         onTap: () async {
                                           Navigator.pop(context);
                                           await provider.removeProfileImage();
+                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                            content: Text("Profile Picture Removed"),
+                                          ));
                                         },
                                       )
                                     ],

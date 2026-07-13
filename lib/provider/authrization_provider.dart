@@ -151,12 +151,13 @@ class AuthrizationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> pickProfileImage () async {
+  Future<bool> pickProfileImage () async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery); 
 
-    if (image == null) return;  
+    if (image == null) return false;  
 
     await saveProfileImage(image.path);
+    return true;
   }
 
   Future<void> removeProfileImage () async {

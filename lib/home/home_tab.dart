@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_recommendation_app/home/see_all_movies.dart';
+import 'package:movie_recommendation_app/main.dart';
 import 'package:movie_recommendation_app/movie_details_screen/movie_detail_screen.dart';
 import 'package:movie_recommendation_app/provider/authrization_provider.dart';
 import 'package:movie_recommendation_app/provider/movie_provider.dart';
@@ -98,8 +99,13 @@ class _HomeTabState extends State <HomeTab> {
                                           ),
                                         ),
                                         onTap: () async {
+                                          bool isPicked = await provider.pickProfileImage();
                                           Navigator.pop(context);
-                                          await provider.pickProfileImage();
+                                          if (isPicked) {
+                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                              content: Text("Profile Picture Added"),
+                                            ));
+                                          }
                                         },
                                       ),
 
@@ -118,6 +124,9 @@ class _HomeTabState extends State <HomeTab> {
                                         onTap: () async {
                                           Navigator.pop(context);
                                           await provider.removeProfileImage();
+                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                            content: Text("Profile Picture Removed"),
+                                          ));
                                         },
                                       )
                                     ],
