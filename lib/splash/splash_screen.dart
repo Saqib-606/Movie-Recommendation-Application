@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   void nextScreen() async {
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 5));
 
     if (auth.currentUser == null) {
       if (mounted) {
@@ -86,7 +86,24 @@ class _SplashScreenState extends State<SplashScreen> {
             )      
           ],
         )
-      )
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          height: 30,
+          alignment: Alignment.center,
+          child: Text(
+            "Developed By Saqib",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              fontStyle: FontStyle.italic,
+              fontFamily: 'Times New Roman',
+              color: AppColors.textPrimary,
+              letterSpacing: 0.1
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
